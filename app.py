@@ -32,4 +32,5 @@ if uploaded_file is not None:
 
 # Footer
 st.markdown("---")
-st.write("Developed with ❤️ M23CSA507")
+st.write("Developed with ❤️ M23CSA507, M23CSA506")
+
