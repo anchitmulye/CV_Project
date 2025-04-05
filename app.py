@@ -2,7 +2,8 @@ import streamlit as st
 from tempfile import NamedTemporaryFile
 from utils.image_utils import save_uploaded_file, cleanup_file
 from models.traditional import predict_traditional
-from models.deep_learning import predict_deep_learning
+from models.deep_learning import predict_baseline_cnn
+from models.deep_learning import predict_custom_cct
 
 # Helper functions
 def save_uploaded_file(uploaded_file):
@@ -31,8 +32,8 @@ if uploaded_file is not None:
     trad2_cat, trad2_conf = predict_traditional(temp_path) # Update this
 
     # --- Deep Learning Models ---
-    dl1_cat, dl1_conf = predict_deep_learning(uploaded_file)
-    dl2_cat, dl2_conf = predict_deep_learning(uploaded_file) # Update this
+    dl1_cat, dl1_conf = predict_baseline_cnn(uploaded_file)
+    dl2_cat, dl2_conf = predict_custom_cct(uploaded_file)
 
     # --- Display in 2x2 Grid ---
     st.markdown("## 🔍 Model Predictions")
@@ -64,5 +65,13 @@ if uploaded_file is not None:
 
 
 st.markdown("---")
-st.write("Developed with ❤️ by Shyam Vyas (M23CSA545), Akansha Gautam (M23CSA506), Anchit Mulye (M23CSA507), and Om Prakash Solanki (M23CSA521)")
+st.markdown("### Developed With ❤️ By:")
 
+st.markdown("""
+| Name                | Roll Number   |
+|---------------------|---------------|
+| Akansha Gautam      | M23CSA506     |
+| Anchit Mulye        | M23CSA507     |
+| Om Prakash Solanki  | M23CSA521     |
+| Shyam Vyas          | M23CSA545     |
+""")
