@@ -22,31 +22,46 @@ st.title("🛣️ Comparative Analysis of Traditional and Deep Learning Approach
 uploaded_file = st.file_uploader("📸 Upload a road image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Save and display uploaded image
+    # Save uploaded file
     temp_path = save_uploaded_file(uploaded_file)
     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-    # Run both models
-    trad_category, trad_confidence = predict_traditional(temp_path)
-    dl_category, dl_confidence = predict_deep_learning(uploaded_file)
+    # --- Traditional Models ---
+    trad1_cat, trad1_conf = predict_traditional(temp_path)
+    trad2_cat, trad2_conf = predict_traditional(temp_path) # Update this
 
-    # Structured output
+    # --- Deep Learning Models ---
+    dl1_cat, dl1_conf = predict_deep_learning(uploaded_file)
+    dl2_cat, dl2_conf = predict_deep_learning(uploaded_file) # Update this
+
+    # --- Display in 2x2 Grid ---
     st.markdown("## 🔍 Model Predictions")
 
     col1, col2 = st.columns(2)
-
     with col1:
-        st.subheader("🧠 Traditional Model (SVM + ORB)")
-        st.markdown(f"**Prediction:** `{trad_category.upper()}`")
-        st.markdown(f"**Confidence:** `{trad_confidence * 100:.2f}%`")
+        st.subheader("🧠 Traditional Model 1 (SVM + ORB)")
+        st.markdown(f"**Prediction:** `{trad1_cat.upper()}`")
+        st.markdown(f"**Confidence:** `{trad1_conf * 100:.2f}%`")
 
     with col2:
-        st.subheader("🤖 Deep Learning Model (CNN)")
-        st.markdown(f"**Prediction:** `{dl_category.upper()}`")
-        st.markdown(f"**Confidence:** `{dl_confidence * 100:.2f}%`")
+        st.subheader("🧠 Traditional Model 2 (SVM + ORB Variant)")
+        st.markdown(f"**Prediction:** `{trad2_cat.upper()}`")
+        st.markdown(f"**Confidence:** `{trad2_conf * 100:.2f}%`")
 
-    # Clean up
+    col3, col4 = st.columns(2)
+    with col3:
+        st.subheader("🤖 Baseline CNN Model")
+        st.markdown(f"**Prediction:** `{dl1_cat.upper()}`")
+        st.markdown(f"**Confidence:** `{dl1_conf * 100:.2f}%`")
+
+    with col4:
+        st.subheader("🤖 Custom CCT Model")
+        st.markdown(f"**Prediction:** `{dl2_cat.upper()}`")
+        st.markdown(f"**Confidence:** `{dl2_conf * 100:.2f}%`")
+
+    # Clean up temp file
     cleanup_file(temp_path)
+
 
 st.markdown("---")
 st.write("Developed with ❤️ by Shyam Vyas (M23CSA545), Akansha Gautam (M23CSA506), Anchit Mulye (M23CSA507), and Om Prakash Solanki (M23CSA521)")
