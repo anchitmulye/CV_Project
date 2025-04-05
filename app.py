@@ -1,21 +1,10 @@
 import streamlit as st
 from tempfile import NamedTemporaryFile
 from utils.image_utils import save_uploaded_file, cleanup_file
-from models.traditional import predict_traditional
+from models.traditional import predict_traditional_orb, predict_traditional_sift
 from models.deep_learning import predict_baseline_cnn
 from models.deep_learning import predict_custom_cct
 
-# Helper functions
-def save_uploaded_file(uploaded_file):
-    with NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
-        temp_file.write(uploaded_file.getbuffer())
-        return temp_file.name
-
-def cleanup_file(path):
-    try:
-        os.remove(path)
-    except Exception:
-        pass
 
 st.set_page_config(page_title="Pothole Detection")
 st.title("🛣️ Comparative Analysis of Traditional and Deep Learning Approaches for Road Pothole Detection")
@@ -25,11 +14,11 @@ uploaded_file = st.file_uploader("📸 Upload a road image...", type=["jpg", "jp
 if uploaded_file is not None:
     # Save uploaded file
     temp_path = save_uploaded_file(uploaded_file)
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
 
     # --- Traditional Models ---
-    trad1_cat, trad1_conf = predict_traditional(temp_path)
-    trad2_cat, trad2_conf = predict_traditional(temp_path) # Update this
+    trad1_cat, trad1_conf = predict_traditional_orb(temp_path)
+    trad2_cat, trad2_conf = predict_traditional_sift(temp_path)
 
     # --- Deep Learning Models ---
     dl1_cat, dl1_conf = predict_baseline_cnn(uploaded_file)
@@ -40,12 +29,12 @@ if uploaded_file is not None:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("🧠 Traditional Model 1 (SVM + ORB)")
+        st.subheader("🧠 Traditional Model 1 (ORB + SVM)")
         st.markdown(f"**Prediction:** `{trad1_cat.upper()}`")
         st.markdown(f"**Confidence:** `{trad1_conf * 100:.2f}%`")
 
     with col2:
-        st.subheader("🧠 Traditional Model 2 (SVM + ORB Variant)")
+        st.subheader("🧠 Traditional Model 2 (SIFT + SVM)")
         st.markdown(f"**Prediction:** `{trad2_cat.upper()}`")
         st.markdown(f"**Confidence:** `{trad2_conf * 100:.2f}%`")
 
