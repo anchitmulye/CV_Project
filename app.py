@@ -1,36 +1,40 @@
 import streamlit as st
-from models import traditional, deep_learning
-from utils.image_utils import save_uploaded_file, cleanup_file
+import os
+from tempfile import NamedTemporaryFile
 
+from models.traditional import predict_traditional
+from models.deep_learning import predict_deep_learning
+
+st.set_page_config(page_title="Pothole Detector", layout="centered")
 st.title("🚧 CV Project M23CSA507 - Pothole Detection")
 
-# Model selection
+# Model Selection
 model_choice = st.selectbox("Choose Model Type", ["Traditional (SVM + ORB)", "Deep Learning (CNN)"])
 
-# Upload image
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Save the uploaded image temporarily
-    temp_path = save_uploaded_file(uploaded_file)
-
-    # Display uploaded image
     st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
 
-    # Prediction
-    if model_choice == "Traditional (SVM + ORB)":
-        category, confidence = traditional.predict(temp_path)
-    else:
-        category, confidence = deep_learning.predict(temp_path)
+    with NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
+        temp_file.write(uploaded_file.getbuffer())
+        temp_path = temp_file.name
 
-    # Display results
-    st.markdown(f"### ➡️ Prediction: **{category.upper()}**")
-    st.markdown(f"### 📊 Confidence: **{confidence * 100:.2f}%**")
+    try:
+        if model_choice == "Traditional (SVM + ORB)":
+            category, confidence = predict_traditional(temp_path)
+        else:
+            category, confidence = predict_deep_learning(uploaded_file)
 
-    # Clean up temp file
-    cleanup_file(temp_path)
+        st.markdown(f"### ➡️ Prediction: **{category.upper()}**")
+        st.markdown(f"### 📊 Confidence: **{confidence * 100:.2f}%**")
 
-# Footer
+    except Exception as e:
+        st.error(f"Error: {e}")
+
+    finally:
+        os.remove(temp_path)
+
 st.markdown("---")
 st.write("Developed with ❤️ M23CSA507, M23CSA506")
 
